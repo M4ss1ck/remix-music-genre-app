@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// twixrox
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  username     String   @unique
+  passwordHash String
+  songs        Song[]
+}
+
+model Song {
+  id        String   @id @default(uuid())
+  ownerId   String
+  owner     User     @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
+  artist    Artist[]
+  genres    Genre[]
+  info      String?
+}
+
+model Genre {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  songs Song[]
+  info  String?
+}
+
+model Artist {
+  id    Int     @id @default(autoincrement())
+  name  String  @unique
+  songs Song[]
+  bio   String?
+}
